@@ -1,0 +1,23 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+.driver_img_wrapper {
+    width: 250px;
+    height: 250px;
+}
+.driver_img_wrapper img{
+    max-width: 250px;
+    max-height: 250px;
+}
+.choose_input_wrapper{
+    width: 60%;
+    margin: 20px auto;
+}
+.error_image {
+    color: tomato;
+    font-size: 12px;
+}
+.success_upload {
+    color: green;
+    font-size: 12px;
+}

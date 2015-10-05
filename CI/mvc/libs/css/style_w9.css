@@ -1,0 +1,299 @@
+@media print {
+    body {-webkit-print-color-adjust: exact;}
+}
+* {
+    font-family: "Arial";
+}
+table
+{
+    border-collapse:collapse;
+    font-size: 12px;
+}
+/*
+table, td {
+    border: 1px solid #000;
+}*/
+td {
+    padding: 0;
+}
+.fl{
+    float:left;
+}
+.border_top{
+    border-top:1px solid black;
+}
+.border_left{
+    border-left:1px solid black;
+}
+.border_right{
+    border-right:1px solid black;
+}
+.border_bottom{
+    border-bottom:1px solid black;
+}
+.tar{
+    text-align: right;
+}
+.merch_agr_tbl{
+    width:1000px;
+    margin:0 auto;
+}
+.merch_agr_tbl h3{
+    margin:0;
+}
+.merch_agr_tbl p{
+    margin:0;
+    font-size:12px;
+}
+.black_header{
+    background-color:black;
+    border: 1px solid black;
+}
+.black_header h3{
+    color:white;
+}
+#tbl2{
+    width:1000px;
+    margin:0 auto;
+}
+#tbl2 p, #tbl2 h3{
+    margin:0;
+}
+#tbl2 p{
+    font-size:12px;
+}
+#tbl2 h3{
+    font-size:17px;
+}
+.lbl_width90 label{
+    width:90px;
+    display:inline-block;
+    margin-left:2px;
+}
+.proc_history label{
+    width: 90%;
+    display: inline-block;
+    margin-left:2px;
+}
+.owner_officer_first_column {
+    width: 301px;
+}
+.owner_officer_second_column {
+    width: 100px;
+}
+.owner_officer td div {
+    height: 80px ;
+}
+.merch_site_insertion_first_row .col {
+    display: inline-block;
+    width: 120px;
+}
+#tbl3, #tbl4{
+    width:1000px;
+    margin:0 auto;
+}
+#tbl3 p, #tbl3 h3, #tbl4 p, #tbl4 h3{
+    margin:0;
+}
+#tbl3 p, #tbl4 p{
+    font-size:12px;
+}
+#tbl3 h3, #tbl4 h3{
+    font-size:17px;
+}
+#tbl5, #tbl6{
+    width:1000px;
+    margin:0 auto;
+}
+.box_rotate p{
+    font-size: 18px !important;
+}
+.box_rotate {
+    position: absolute;
+    font-weight:bold;
+    font-size:15px;
+    -moz-transform: rotate(-90deg);  /* FF3.5+ */
+    -o-transform: rotate(-90deg);  /* Opera 10.5 */
+    -webkit-transform: rotate(-90deg);  /* Saf3.1+, Chrome */
+    filter:  progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083);  /* IE6,IE7 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083)"; /* IE8 */
+}
+.march_1 p{
+    text-align:center;
+    font-size: 18px !important;
+}
+span .print {
+    margin: 5px auto;
+    font-weight: bold;
+
+}
+span .print {
+    margin: 5px auto;
+    font-weight: bold;
+
+}
+/*<a href="#" class="myButton">dark grey</a>*/
+
+.print_submit {
+    margin: 0 18%;
+    -moz-box-shadow:inset 0px 1px 3px 0px #91b8b3;
+    -webkit-box-shadow:inset 0px 1px 3px 0px #91b8b3;
+    box-shadow:inset 0px 1px 3px 0px #91b8b3;
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #768d87), color-stop(1, #6c7c7c));
+    background:-moz-linear-gradient(top, #768d87 5%, #6c7c7c 100%);
+    background:-webkit-linear-gradient(top, #768d87 5%, #6c7c7c 100%);
+    background:-o-linear-gradient(top, #768d87 5%, #6c7c7c 100%);
+    background:-ms-linear-gradient(top, #768d87 5%, #6c7c7c 100%);
+    background:linear-gradient(to bottom, #768d87 5%, #6c7c7c 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#768d87', endColorstr='#6c7c7c',GradientType=0);
+    background-color:#768d87;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+    border:1px solid #566963;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-family:arial;
+    font-size:15px;
+    font-weight:bold;
+    padding:11px 23px;
+    text-decoration:none;
+    text-shadow:0px -1px 0px #2b665e;
+}
+.print_submit:hover {
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #6c7c7c), color-stop(1, #768d87));
+    background:-moz-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
+    background:-webkit-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
+    background:-o-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
+    background:-ms-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
+    background:linear-gradient(to bottom, #6c7c7c 5%, #768d87 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#6c7c7c', endColorstr='#768d87',GradientType=0);
+    background-color:#6c7c7c;
+}
+.print_submit:active {
+    position:relative;
+    top:1px;
+}
+.print_submit {
+	float: right;
+	margin-bottom: 50px;
+}
+.clear {
+	clear: both;
+	height: 20px;
+}
+.p_align p{
+	text-align: justify;
+}
+.app_list {
+	margin-left: 30px;
+}
+.app_list h2, .app_list h3{
+	font-family: Arial, Helvetica, Geneva, sans-serif;
+	color: #336699;
+	background-color: #FFFFFF;
+}
+.app_list A, .app_list A:visited {
+	color: #996633;
+	background-color: #FFFFFF;
+	font-size: 14px;
+	display: inline-block;
+}
+.app_list A:hover {
+	text-decoration: none;
+}
+.app_list ul li img {
+	opacity: 0.7;
+	height: 15px;
+	margin: 5px 0 0 7px;
+}
+.app_list table tr td img {
+	opacity: 0.7;
+	height: 15px;
+	margin: 5px 0 0 7px;
+}
+.app_list ul li {
+	line-height: 20px;
+}
+.urls {
+	width: 300px;
+	margin: 0 auto;
+}
+.urls, .urls a, .urls a:visited {
+	color: #996633;
+}
+.urls a:hover {
+	text-decoration: none;
+}
+.active {
+	text-decoration: none;
+	font-weight: bold;
+}
+.agreement_url {
+	border: 1px solid #768D87; 
+	width: 900px;
+	margin: 20px auto;
+	padding: 8px 0;
+	text-align: center;
+}
+
+
+input {margin: 5px 4px 0 7px;}
+td { border:0;  padding: 5px;}
+.table { border-collapse: collapse; width:1000px; margin:0 auto; background-color:white; }
+.table-head { border:0;margin-bottom:0;padding-bottom:0; }
+.table-body { border:0; border-top:0; margin-top:0;padding-top:0;margin-bottom:0;padding-bottom:0; }
+/*
+.table-body td { border:0; border-top:0;}
+.table-footer { border:0; border-top:0; margin-top:0; padding-top:0; }
+.table-footer td { border:0; border-top:0;}
+*/
+.very_top {
+	border-bottom: 2px solid #000;
+}
+.very_top_mid {
+	border-right: solid 2px #000000; 
+	border-left: solid 2px #000000; 
+}
+.second_table td {
+	border-bottom: 1px solid #000;
+}
+.very_top_left span{
+	font-weight: bold;
+	font-size: 32px;
+}
+.very_top_mid h1 {
+	text-align: center;
+}
+.very_top_right {
+	font: 18px bold;
+}
+.rotate {
+	filter:  progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083);  /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083)"; /* IE8 */
+	-moz-transform: rotate(-90.0deg);  /* FF3.5+ */
+	-ms-transform: rotate(-90.0deg);  /* IE9+ */
+	-o-transform: rotate(-90.0deg);  /* Opera 10.5 */
+	-webkit-transform: rotate(-90.0deg);  /* Safari 3.1+, Chrome */
+	transform: rotate(-90.0deg);  /* Standard */
+}
+.third_table_last_row td {
+	padding-bottom: 0;
+}
+.required_ch input{
+	margin:0;
+}
+.required_ch {
+   border: 2px solid #A5F29D;
+   height: 13px;
+   display: inline-block;
+}
+.required_radio {
+   border: 2px solid #A5F29D;
+   height: 13px;
+   display: inline-block;
+}
+.required_radio input{
+	margin:0;
+}

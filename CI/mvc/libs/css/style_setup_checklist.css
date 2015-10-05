@@ -1,0 +1,45 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.body_wrapper{
+    width:1000px;
+    margin:0 auto;
+}
+h3{
+	margin:0;
+	padding:0;
+}
+table, th, td {
+    border: 1px solid #DBE5F1;
+    border-collapse: collapse;
+}
+table table{
+	border:none;
+}
+table tr{
+	height:34px;
+}
+table table td{
+	border-top:none;
+	border-bottom:none;
+}
+.bg_color{
+	background-color:#DBE5F1;
+}
+.required_ch input{
+	margin:0;
+}
+.required_ch{
+	border: 2px solid #A5F29D;
+    height: 13px;
+    display: inline-block;
+}
+.required_radio {
+   border: 2px solid #A5F29D;
+   height: 13px;
+   display: inline-block;
+}
+.required_radio input{
+	margin:0;
+}

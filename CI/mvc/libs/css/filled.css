@@ -1,0 +1,20 @@
+.urls .form_submit_button, .urls .clear_button {
+	display:none;
+}
+input[type="text"] {
+	border:none;
+	outline:none;
+	background-color:white;
+}
+select{
+	background-color:white !important;
+}
+.required_radio{
+	border:none;
+}
+.required_ch{
+	border:none;
+}
+.merchant_address_label {
+  vertical-align: 5px;
+}

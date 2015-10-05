@@ -1,0 +1,149 @@
+@media print {
+    body {-webkit-print-color-adjust: exact;}
+}
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+table
+{
+    border-collapse:collapse;
+    font-size: 12px;
+}
+/*
+table, td {
+    border: 1px solid #000;
+}*/
+td {
+    padding: 0;
+}
+.fl{
+    float:left;
+}
+.border_top{
+    border-top:1px solid black;
+}
+.border_left{
+    border-left:1px solid black;
+}
+.border_right{
+    border-right:1px solid black;
+}
+.border_bottom{
+    border-bottom:1px solid black;
+}
+.body_wrapper{
+    width:1000px;
+    margin:0 auto;
+}
+.urls {
+	width: 600px;
+    height: 50px;
+	margin: 0 auto;
+}
+.urls, .urls a, .urls a:visited {
+	color: #996633;
+}
+.urls a:hover {
+	text-decoration: none;
+}
+.clear {
+	clear: both;
+	height: 20px;
+}
+table {
+	width: 1000px;
+}
+td {
+	padding: 10px;
+	/*border: 1px solid black;*/
+}
+table.merchant_address {
+    width: 100%;
+}
+table.merchant_address td {
+    padding: 0;
+    margin: 0;
+}
+.agreement_url {
+	border: 1px solid #768D87;
+	width: 900px;
+	margin: 20px auto;
+	padding: 8px 0;
+	text-align: center;
+}
+.app_list {
+	margin-left: 30px;
+}
+.app_list h2, .app_list h3{
+	font-family: Arial, Helvetica, Geneva, sans-serif;
+	color: #336699;
+	background-color: #FFFFFF;
+}
+.app_list A, .app_list A:visited {
+	color: #996633;
+	background-color: #FFFFFF;
+	font-size: 14px;
+	display: inline-block;
+}
+.app_list A:hover {
+	text-decoration: none;
+}
+.app_list ul li img {
+	opacity: 0.7;
+	height: 15px;
+	margin: 5px 0 0 7px;
+}
+.app_list table tr td img {
+	opacity: 0.7;
+	height: 15px;
+	margin: 5px 0 0 7px;
+}
+.app_list ul li {
+	line-height: 20px;
+}
+.app_list table td {
+	padding: 2px;
+}
+
+.header {
+	color: #888989;
+	font-size: 110px;
+	text-align: center;
+	margin: 20px 0 0 0;
+	height: 105px;
+}
+.after_header {
+	color: #9fc9de;
+	font-size: 16px;
+	text-transform: uppercase;
+	letter-spacing:9px;
+	width: 551px;
+	margin: 0 auto 50px auto;
+}
+.noterm {
+	text-transform: uppercase;
+	text-align: center;
+	font-size: 24px;
+	vertical-align: top;
+}
+.mnaddr {
+	text-transform: uppercase;
+	text-align: right;
+	font-size: 18px;
+}
+.alcent {
+	text-align: center;
+}
+.stamp_wrapper img {
+	height: 190px;
+}
+.vert_bot {
+	vertical-align: bottom;
+}
+.bord_col {
+	border-color: #A8A8A8;
+	text-align: center;
+}
+.bord_col.bord_left {
+    text-align: left;
+}
