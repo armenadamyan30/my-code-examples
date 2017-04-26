@@ -1,0 +1,749 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Купить Вместе</name>
+    <code>buytogether</code>
+    <version>1.1</version>
+    <author>Esterox </author>
+    <link>http://esterox.am</link>
+    <file path="admin/controller/catalog/product.php">
+        <operation>
+            <search><![CDATA[
+           $data['product_relateds'] = array();
+            ]]></search>
+            <add position="before"><![CDATA[
+            $this->load->language('extension/module/buytogether_product');
+
+            // setup languages
+            $data['mod_buy_together'] = $this->language->get('mod_buy_together');
+            $data['mod_buy_with_this_product'] = $this->language->get('mod_buy_with_this_product');
+            $data['mod_entry_name'] = $this->language->get('mod_entry_name');
+
+            $this->load->model('extension/module/buytogether');
+            $module_info = $this->model_extension_module_buytogether->getModuleInfo();
+            $data['buytogether_status'] = $module_info['status'];
+
+            if (isset($this->request->post['product_related'])) {
+                $buytogether_products = $this->request->post['product_related'];
+            } elseif (isset($this->request->get['product_id'])) {
+                $buytogether_products = $this->model_catalog_product->getProductBuytogether($this->request->get['product_id']);
+            } else {
+                $buytogether_products = array();
+            }
+
+            $data['product_buytogether'] = array();
+            foreach ($buytogether_products as $product_id) {
+                $buytogether_info = $this->model_catalog_product->getProduct($product_id);
+
+                if ($buytogether_info) {
+                    $data['product_buytogether'][] = array(
+                        'product_id' => $buytogether_info['product_id'],
+                        'name'       => $buytogether_info['name']
+                    );
+                }
+            }
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/controller/catalog/product.php">
+        <operation>
+            <search><![CDATA[
+           protected function getForm() {
+            ]]></search>
+            <add position="after"><![CDATA[
+        $this->document->addScript('view/javascript/jquery/jquery-ui/jquery-ui.min.js');
+        $this->document->addStyle('view/javascript/jquery/jquery-ui/jquery-ui.min.css');
+        $this->document->addScript('view/javascript/buytogether/buytogether.js');
+        $this->document->addStyle('view/stylesheet/buytogether.css');
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/model/catalog/product.php">
+        <operation>
+            <search index="1"><![CDATA[
+            if (isset($data['product_reward'])) {
+            ]]></search>
+            <add position="before"><![CDATA[
+            // Buytogether update
+            $this->db->query("DELETE FROM " . DB_PREFIX . "product_buytogether WHERE product_id = '" . (int)$product_id . "'");
+
+            if (isset($data['product_buytogether'])) {
+            foreach ($data['product_buytogether'] as $order => $buytogether_id) {
+                $this->db->query("INSERT INTO " . DB_PREFIX . "product_buytogether SET product_id = '" . (int)$product_id . "', buytogether_id = '" . (int)$buytogether_id . "', order_number = '" . ($order+1) . "'");
+            }
+            }
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/model/catalog/product.php">
+        <operation>
+            <search><![CDATA[
+            public function deleteProduct($product_id) {
+            ]]></search>
+            <add position="after"><![CDATA[
+            // Buy together delete function
+            $this->db->query("DELETE FROM " . DB_PREFIX . "product_buytogether WHERE product_id = '" . (int)$product_id . "'");
+            $this->db->query("DELETE FROM " . DB_PREFIX . "product_buytogether WHERE buytogether_id = '" . (int)$product_id . "'");
+
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/model/catalog/product.php">
+        <operation>
+            <search><![CDATA[
+            $product_id = $this->db->getLastId();
+            ]]></search>
+            <add position="after"><![CDATA[
+            // Buy Together Module Add function
+            $this->db->query("DELETE FROM " . DB_PREFIX . "product_buytogether WHERE product_id = '" . (int)$product_id . "'");
+            if (isset($data['product_buytogether'])) {
+                foreach ($data['product_buytogether'] as $order => $buytogether_id) {
+                    $this->db->query("INSERT INTO " . DB_PREFIX . "product_buytogether SET product_id = '" . (int)$product_id . "', buytogether_id = '" . (int)$buytogether_id . "', order_number = '" . ($order+1) . "'");
+                }
+            }
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/model/catalog/product.php">
+        <operation>
+            <search><![CDATA[
+            public function getRecurrings($product_id) {
+            ]]></search>
+            <add position="before"><![CDATA[
+            	// Buy Together get
+                public function getProductBuytogether($product_id) {
+                    $product_buytogether_data = array();
+
+                    $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_buytogether WHERE product_id = '" . (int)$product_id . "'");
+
+                    foreach ($query->rows as $result) {
+                        $product_buytogether_data[] = $result['buytogether_id'];
+                    }
+
+                    return $product_buytogether_data;
+                }
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/view/template/catalog/product_form.tpl">
+        <operation>
+            <search index="2"><![CDATA[
+<script type="text/javascript">
+            ]]></search>
+            <add position="replace" offset="172"><![CDATA[
+ <script type="text/javascript"><!--
+      // Manufacturer
+      $('input[name=\'manufacturer\']').autocomplete({
+          'source': function(request, response) {
+              $.ajax({
+                  url: 'index.php?route=catalog/manufacturer/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
+                  dataType: 'json',
+                  success: function(json) {
+                      json.unshift({
+                          manufacturer_id: 0,
+                          name: '<?php echo $text_none; ?>'
+                      });
+
+                      response($.map(json, function(item) {
+                          return {
+                              label: item['name'],
+                              value: item['manufacturer_id']
+                          }
+                      }));
+                  }
+              });
+          },
+          'select': function(event,item) {
+              var item = item.item;
+              $('input[name=\'manufacturer\']').val(item['label']);
+              $('input[name=\'manufacturer_id\']').val(item['value']);
+          }
+      });
+
+      // Category
+      $('input[name=\'category\']').autocomplete({
+          'source': function(request, response) {
+              $.ajax({
+                  url: 'index.php?route=catalog/category/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
+                  dataType: 'json',
+                  success: function(json) {
+                      response($.map(json, function(item) {
+                          return {
+                              label: item['name'],
+                              value: item['category_id']
+                          }
+                      }));
+                  }
+              });
+          },
+          'select': function(event,item) {
+              var item = item.item;
+              $('#product-category' + item['value']).remove();
+
+              $('#product-category').append('<div id="product-category' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="product_category[]" value="' + item['value'] + '" /></div>');
+              item['value'] = '';
+              $('input[name=\'category\']').val('');
+
+          }
+      });
+
+      $('#product-category').delegate('.fa-minus-circle', 'click', function() {
+          $(this).parent().remove();
+      });
+
+      // Filter
+      $('input[name=\'filter\']').autocomplete({
+          'source': function(request, response) {
+              $.ajax({
+                  url: 'index.php?route=catalog/filter/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
+                  dataType: 'json',
+                  success: function(json) {
+                      response($.map(json, function(item) {
+                          return {
+                              label: item['name'],
+                              value: item['filter_id']
+                          }
+                      }));
+                  }
+              });
+          },
+          'select': function(event,item) {
+              var item = item.item;
+              $('#product-filter' + item['value']).remove();
+
+              $('#product-filter').append('<div id="product-filter' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="product_filter[]" value="' + item['value'] + '" /></div>');
+              item['value'] = '';
+              $('input[name=\'filter\']').val('');
+
+          }
+      });
+
+      $('#product-filter').delegate('.fa-minus-circle', 'click', function() {
+          $(this).parent().remove();
+      });
+
+      // Downloads
+      $('input[name=\'download\']').autocomplete({
+          'source': function(request, response) {
+              $.ajax({
+                  url: 'index.php?route=catalog/download/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
+                  dataType: 'json',
+                  success: function(json) {
+                      response($.map(json, function(item) {
+                          return {
+                              label: item['name'],
+                              value: item['download_id']
+                          }
+                      }));
+                  }
+              });
+          },
+          'select': function(event,item) {
+              var item = item.item;
+              $('#product-download' + item['value']).remove();
+
+              $('#product-download').append('<div id="product-download' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="product_download[]" value="' + item['value'] + '" /></div>');
+              item['value'] = '';
+              $('input[name=\'download\']').val('');
+          }
+      });
+
+      $('#product-download').delegate('.fa-minus-circle', 'click', function() {
+          $(this).parent().remove();
+      });
+
+      // Related
+      $('input[name=\'related\']').autocomplete({
+          'source': function(request, response) {
+              $.ajax({
+                  url: 'index.php?route=catalog/product/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
+                  dataType: 'json',
+                  success: function(json) {
+                      response($.map(json, function(item) {
+                          return {
+                              label: item['name'],
+                              value: item['product_id']
+                          }
+                      }));
+                  }
+              });
+          },
+          'select': function(event,item) {
+              var item = item.item;
+              $('#product-related' + item['value']).remove();
+
+              $('#product-related').append('<div id="product-related' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="product_related[]" value="' + item['value'] + '" /></div>');
+              item['value'] = '';
+              $('input[name=\'related\']').val('');
+
+          }
+      });
+
+      $('#product-related').delegate('.fa-minus-circle', 'click', function() {
+          $(this).parent().remove();
+      });
+
+
+      // Buy Together
+      $('input[name=\'buytogether\']').autocomplete({
+          'source': function(request, response) {
+              $.ajax({
+                  url: 'index.php?route=catalog/product/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
+                  dataType: 'json',
+                  success: function(json) {
+                      response($.map(json, function(item) {
+                          return {
+                              label: item['name'],
+                              value: item['product_id']
+                          }
+                      }));
+                  }
+              });
+          },
+          'select': function(event, item) {
+              var item = item.item;
+              $('#product-buytogether' + item['value']).remove();
+              $('#product-buytogether').append('<div id="product-buytogether' + item['value'] + '" class="ui-sortable-handle"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="product_buytogether[]" value="' + item['value'] + '" /></div>');
+              item['value'] = '';
+              $('#input-buytogether').val('');
+
+          }
+      });
+
+      $('#product-buytogether').delegate('.fa-minus-circle', 'click', function() {
+          $(this).parent().remove();
+      });
+      //--></script>
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/view/template/catalog/product_form.tpl">
+        <operation>
+            <search><![CDATA[
+            <div class="tab-pane" id="tab-attribute">
+            ]]></search>
+            <add position="before" offset="1"><![CDATA[
+            <?php if(isset($buytogether_status) && $buytogether_status) { ?>
+            	<div class="form-group">
+                <label class="col-sm-2 control-label" for="input-buytogether"><span data-toggle="tooltip" title="<?php echo $help_related; ?>"><?php echo $mod_buy_with_this_product; ?></span></label>
+                <div class="col-sm-10">
+                  <input type="text" name="buytogether" value="" placeholder="<?php echo $mod_entry_name; ?>" id="input-buytogether" class="form-control" />
+                  <div id="product-buytogether" class="well well-sm" style="height: 150px; overflow: auto;">
+                    <?php foreach ($product_buytogether as $product_buytogether) { ?>
+                    <div id="product-buytogether<?php echo $product_buytogether['product_id']; ?>"><i class="fa fa-minus-circle"></i> <?php echo $product_buytogether['name']; ?>
+                      <input type="hidden" name="product_buytogether[]" value="<?php echo $product_buytogether['product_id']; ?>" />
+                    </div>
+                    <?php } ?>
+                  </div>
+                </div>
+              </div>
+              <?php } ?>
+            ]]></add>
+        </operation>
+    </file>
+
+
+    <!--Frontend-->
+    <file path="catalog/controller/product/product.php">
+        <operation>
+            <search><![CDATA[
+            public function index() {
+            ]]></search>
+            <add position="after"><![CDATA[
+            $this->document->addStyle('catalog/view/stylesheet/buytogether.css');
+            $this->document->addScript('catalog/view/javascript/buytogether/buytogether.js');
+            $this->document->addScript('catalog/view/javascript/buytogether/owlCarousel.js');
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/storeset/template/product/product.tpl">
+        <operation>
+            <search><![CDATA[
+            <br/><a href="javascript: void(0);" onclick="get_popup_purchase(<?php echo $product_id; ?>); return false" class="button" >
+            ]]></search>
+            <add position="replace"><![CDATA[
+            <a href="javascript: void(0);" onclick="get_popup_purchase(<?php echo $product_id; ?>); return false" class="button" >
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/storeset/template/product/product.tpl">
+        <operation>
+            <search><![CDATA[
+            <h1><?php echo $heading_title; ?></h1>
+            ]]></search>
+            <add position="replace"><![CDATA[
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/storeset/template/product/product.tpl">
+        <operation>
+            <search><![CDATA[
+                <div id="container">
+            ]]></search>
+            <add position="replace"><![CDATA[
+            <div id="container" class="product_container">
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/storeset/template/product/product.tpl">
+        <operation>
+            <search><![CDATA[
+            <div class="product-info">
+            ]]></search>
+            <add position="before"><![CDATA[
+                <h1 style="text-align: center"><?php echo $heading_title; ?></h1>
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/storeset/template/product/product.tpl">
+        <operation>
+            <search><![CDATA[
+            <div class="product-info">
+            ]]></search>
+            <add position="after"><![CDATA[
+                <div class="main_product_section">
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/storeset/template/product/product.tpl">
+        <operation>
+            <search><![CDATA[
+                <ul class="breadcrumb product-crumbs">
+            ]]></search>
+            <add position="before"><![CDATA[
+               <div class="breadcrumb_wrapper">
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/storeset/template/product/product.tpl">
+        <operation>
+            <search index="1"><![CDATA[
+            <div class="content">
+            ]]></search>
+            <add position="before"><![CDATA[
+                </div>
+            ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/view/theme/storeset/template/product/product.tpl">
+        <operation>
+            <search index="3"><![CDATA[
+            <?php $class = 'col-sm-6'; ?>
+            ]]></search>
+            <add position="after" offset="1"><![CDATA[
+            <?php $class = 'col-sm-3' ?>
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/storeset/template/product/product.tpl">
+        <operation>
+            <search index="6"><![CDATA[
+            <?php $class = 'col-sm-6'; ?>
+            ]]></search>
+            <add position="after" offset="1"><![CDATA[
+            <?php $class = 'col-sm-5' ?>
+            ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/view/theme/storeset/template/product/product.tpl">
+        <operation>
+            <search><![CDATA[
+            <?php if($store_text!='') {
+            ]]></search>
+            <add position="after" offset="3"><![CDATA[
+            <?php if ($column_left && $column_right) { ?>
+            <?php $class = 'col-sm-4'; ?>
+            <?php } elseif ($column_left || $column_right) { ?>
+            <?php $class = 'col-sm-4'; ?>
+            <?php } else { ?>
+            <?php $class = 'col-sm-4'; ?>
+            <?php } ?>
+            <div class="<?php echo $class; ?>">
+            <?php if($store_text!='') {
+                echo html_entity_decode($store_text);
+            } ?>
+            </div>
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/storeset/template/product/product.tpl">
+        <operation>
+            <search index="0"><![CDATA[
+            <?php if($store_text!='') {
+            ]]></search>
+            <add position="replace" offset="2"><![CDATA[
+
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/storeset/template/product/product.tpl">
+        <operation>
+            <search><![CDATA[
+            return validate(this);
+            ]]></search>
+            <add position="replace"><![CDATA[]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/storeset/template/product/product.tpl">
+        <operation>
+            <search index="4"><![CDATA[
+            <?php if ($column_left && $column_right) { ?>
+            ]]></search>
+            <add position="before"><![CDATA[
+            </div>
+             <!--Buytogether MOD-->
+                <?php if ($buytogether_moduleinfo['status'] && $buytogether) { ?>
+                <div class="box-main">
+                    <!--top-->
+                    <div id="buytogether-inner" class="row">
+                        <div class="col-sm-3">
+                            <a class="button current-link scroller"><?php echo $buytogether_moduleinfo['header']; ?></a>
+                        </div>
+                        <div class="col-sm-5">
+                            <span id="buytogether_price" data-currency="<?php echo $currency_sm; ?>"></span>
+                        </div>
+                        <div class="col-sm-4">
+                            <a id="buytogether_button" data-prod-id = "<?php echo $product_id ?>" class="button current-link" ><?php echo $buy_together;?></a>
+                            <a href="#" onclick="return false;" data-toggle="popover" data-html="true"  title="<?php echo $entry_description?>" data-content=" <?php echo $buytogether_moduleinfo['description'] ?>" data-placement="left" class=question_icon>
+                                <i class="fa fa-question"></i>
+                            </a>
+
+                        </div>
+                    </div>
+                    <!--end top-->
+
+                    <div class="category-slide buytogether-slide">
+                        <div id="cat-buytogether" class="owl-carousel owl-theme" style="display: block; opacity: 1;">
+                            <?php
+                            $cnt = count($buytogether);
+
+                            $owltworow = "false";
+                            if($cnt > 9) {
+                                $owltworow = "true";
+                            }
+
+                            $autoplay = "false";
+                            if($cnt > 1) {
+                                $autoplay = "true";
+                            }
+                            ?>
+                            <?php foreach ($buytogether as $product) { ?>
+                            <div class="item" data-id="<?php echo $product['product_id'] ?>">
+                                <?php if ($product['product_stickers']) { ?>
+                                <div class="sticker-box-cat">
+                                    <?php foreach ($product['product_stickers'] as $product_sticker) { ?>
+                                        <span class="stickers-cat" style="color: <?php echo $product_sticker['color']; ?>; background: <?php echo $product_sticker['background']; ?>;">
+									              <?php echo $product_sticker['text']; ?>
+									            </span>
+                                    <?php } ?>
+                                </div>
+                                <?php } ?>
+                                <?php if ($product['thumb']) { ?>
+                                <div class="image">
+                                    <a href="<?php echo $product['href']; ?>">
+                                        <img src="<?php echo $product['thumb']; ?>" alt="<?php echo $product['name']; ?>" />
+                                    </a>
+                                </div>
+                                <?php } ?>
+                                <div class="cart">
+                                    <!--add count-->
+                                    <?php if (isset($images_by_options_data['status']) && $images_by_options_data['status']) { ?>
+                                    <div class="number" data-price="<?php echo $product['rel_price'] ?>">
+                                        <input name="product_id" value="<?php echo $product_id; ?>" style="display: none;" type="hidden">
+                                        <div class="frame-change-count">
+                                            <div class="btn-plus">
+                                                <button type="button" id="superplus" onclick="$(this).parent().parent().next().val(~~$(this).parent().parent().next().val()+1); update_quantity('<?php echo $product_id; ?>');" class="main-color1">
+                                                    <span class="icon-plus"><i class="fa fa-plus"></i></span>
+                                                </button>
+                                            </div>
+                                            <div class="btn-minus">
+                                                <button type="button" id="superminus" onclick="$(this).parent().parent().next().val(~~$(this).parent().parent().next().val()-1); update_quantity('<?php echo $product_id; ?>');" class="main-color1">
+                                                    <span class="icon-minus"><i class="fa fa-minus"></i></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <input type="text" name="quantity1" value="0" maxlength="4" class="buy-plus-minus" >
+                                    </div>
+                                    <?php } else { ?>
+                                    <div class="number">
+                                        <input name="product_id" value="<?php echo $product_id; ?>" style="display: none;" type="hidden">
+                                        <div class="frame-change-count">
+                                            <div class="btn-plus">
+                                                <button type="button" id="superplus" onclick="$(this).parent().parent().next().val(~~$(this).parent().parent().next().val()+1);" class="main-color1">
+                                                    <span class="icon-plus"><i class="fa fa-plus"></i></span>
+                                                </button>
+                                            </div>
+                                            <div class="btn-minus">
+                                                <button type="button" id="superminus" onclick="$(this).parent().parent().next().val(~~$(this).parent().parent().next().val()-1);" class="main-color1">
+                                                    <span class="icon-minus"><i class="fa fa-minus"></i></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <input type="text" name="quantity" value="1" maxlength="4" class="plus-minus" >
+                                    </div>
+                                    <?php } ?>
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="name">
+                                    <a href="<?php echo $product['href']; ?>"><?php echo $product['name']; ?></a>
+                                </div>
+                                <?php if ($product['price']) { ?>
+                                <div class="price">
+                                    <?php if (!$product['special']) { ?>
+                                    <?php echo $product['price']; ?>
+                                    <?php } else { ?>
+                                    <span class="price-old"><?php echo $product['price']; ?></span> <?php echo $product['special']; ?>
+                                    <?php } ?>
+                                </div>
+                                <?php } ?>
+                                <?php if ($product['rating']) { ?>
+                                <div class="rating">
+                                    <?php for ($i = 1; $i <= 5; $i++) { ?>
+                                    <?php if ($product['rating'] < $i) { ?>
+                                    <span><i class="fa fa-star-o stars-rev"></i></span>
+                                    <?php } else { ?>
+                                    <span><i class="fa fa-star stars-rev"></i></span>
+                                    <?php } ?>
+                                    <?php } ?>
+                                </div>
+                                <?php } ?>
+                            </div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <script>
+                        $(document).ready(function() {
+                            $('#cat-buytogether').owlCarousel({
+                                autoplay:<?php echo $autoplay; ?>,
+                                autoplaySpeed:1500,
+                                    autoplayHoverPause:true,
+                                    nav:true,
+                                    navText:["<",">"],
+                                    responsiveClass:true,
+                                    dots:true,
+
+                                    owl2row: <?php echo $owltworow; ?>,
+                                    owl2rowTarget: 'item',
+                                    owl2rowContainer: 'owl2row-item',
+                                    owl2rowDirection: 'utd',
+                                    responsive:{
+                                    0:{
+                                        items:1,
+                                            nav:true
+                                    },
+                                    600:{
+                                        items:2,
+                                            nav:false
+                                    },
+                                    1000:{
+                                        items:5,
+                                            nav:true,
+                                            loop:false
+                                    }
+                                }
+                            });
+                        });
+                    </script>
+                </div>
+                <?php } ?>
+    <div class="clearfix"></div>
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/product/product.php">
+        <operation>
+            <search ><![CDATA[
+            $data['tags'] = array();
+            ]]></search>
+            <add position="before"><![CDATA[
+/*load buytogether mod*/
+
+            // load lang buytogether
+            $this->load->language('extension/module/buytogether');
+            $data['buy_together'] = $this->language->get('buy_together');
+            $data['entry_description'] = $this->language->get('entry_description');
+            $results_buytogether = $this->model_catalog_product->getProductBuytogether($product_id);
+            $data['buytogether'] = array();
+            foreach ($results_buytogether as $result) {
+
+                $image = $this->model_tool_image->resize($result['image'], $product_auto_related_data['width'], $product_auto_related_data['height']);
+
+                if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+                    $price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                    $rel_price = $result['price'];
+                } else {
+                    $price = false;
+                    $rel_price = 0;
+                }
+
+                if ((float)$result['special']) {
+                    $special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')));
+                    $rel_price = $result['special'];
+                } else {
+                    $special = false;
+                }
+
+                if ($this->config->get('config_review_status')) {
+                    $rating = (int)$result['rating'];
+                } else {
+                    $rating = false;
+                }
+
+                $data['buytogether'][] = array(
+                    'product_stickers' => array(),
+                    'product_id'       => $result['product_id'],
+                    'thumb'   	       => $image,
+                    'name'    	       => $result['name'],
+                    'mpn'    	       => $result['mpn'],
+                    'price'   	       => $price,
+                    'special' 	       => $special,
+                    'rel_price'        => $rel_price,
+                    'rating'           => $rating,
+                    'quantity'         => $result['quantity'],
+                    'minimum'          => ($result['minimum']) ? $result['minimum'] : 1,
+                    'reviews'          => sprintf($this->language->get('text_reviews'), (int)$result['reviews']),
+                    'href'    	       => $this->url->link('product/product', 'product_id=' . $result['product_id'])
+                );
+            }
+
+            // load model buytogether
+            $this->load->model('extension/module/buytogether');
+            $data['buytogether_moduleinfo'] = $this->model_extension_module_buytogether->getModuleInfo();
+
+            $data['currency_sm'] = $this->session->data['currency'] == 'RUB' ? 'р.' : $this->session->data['currency'];
+            /*end buytogether*/
+
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/model/catalog/product.php">
+        <operation>
+            <search ><![CDATA[
+public function getProductLayoutId($product_id) {
+            ]]></search>
+            <add position="before"><![CDATA[
+public function getProductBuytogether($product_id) {
+        $product_data = array();
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_buytogether pr LEFT JOIN " . DB_PREFIX . "product p ON (pr.buytogether_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pr.product_id = '" . (int)$product_id . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' ORDER BY pr.order_number");
+
+        foreach ($query->rows as $result) {
+            $product_data[$result['buytogether_id']] = $this->getProduct($result['buytogether_id']);
+        }
+        return $product_data;
+    }
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/product/product.php">
+        <operation>
+            <search ><![CDATA[
+            $data['thumb'] = '';
+            ]]></search>
+            <add position="after"><![CDATA[
+$data['thumb_together'] = $this->model_tool_image->resize('placeholder.png', $this->config->get($this->config->get('config_theme') . '_image_thumb_width'), $this->config->get($this->config->get('config_theme') . '_image_thumb_height'));
+            ]]></add>
+        </operation>
+    </file>
+</modification>
