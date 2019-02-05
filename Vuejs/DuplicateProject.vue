@@ -1,24 +1,22 @@
 <template>
-  <div class="media align-items-center" v-on:click="duplicateProject(currentProject)">
-    <div class="mr-3">
-      <div class="ex-duplicate"></div>
+    <div class="media align-items-center" v-on:click="duplicateProject(currentProject)">
+        <div class="mr-3">
+            <div class="ex-duplicate"></div>
+        </div>
+        <div class="media-body">
+            Duplicate project
+        </div>
     </div>
-    <div class="media-body">
-      Duplicate project
-    </div>
-  </div>
 </template>
 <script>
     export default {
         name: 'duplicate-project',
         props: ['currentProject', 'updateProjects'],
         data() {
-            return {
-
-            }
+            return {}
         },
         methods: {
-            duplicateProject (project) {
+            duplicateProject(project) {
                 const self = this;
                 let _buildingType = null;
                 let buildingTypeId = project.building_types.values().next().value.id;
@@ -37,8 +35,7 @@
                         self.updateProjects(newProject);
                     });
                 }).catch(error => {
-                    alert(error);
-                    // Handle errors of getBuildingType, copyProjectThumbnail
+                    console.log(error);
                 });
 
             },
@@ -50,28 +47,17 @@
                         });
                     });
             },
-            copyProjectThumbnail(project){
+            copyProjectThumbnail(project) {
                 return new Promise(
                     (resolve, reject) => {
                         let thumbnail = null;
-                        if(project.thumbnail && project.thumbnail.name && false) { // TODO Need to check
+                        if (project.thumbnail && project.thumbnail.name && false) { // TODO Need to check
                             let splitName = project.thumbnail.name.split('_');
-                            let newName = '';
                             if (splitName.length > 1) {
                                 splitName[0] = Date.now();
                             }
-                            newName = splitName.join('_');
-//                        console.log(newName);
-                            let originalFile = new DB.File({name: project.thumbnail.key, type: 'data-url'});
-                            //                    console.log(originalFile);
-//                        originalFile.download((data) => { // TODO Need to check
-//                            // Data is now a data URL string
-//                            console.log(data); // "data:image/jpeg;base64,R0lGODlhDAA..."
-//                            reject('Error ');
-//                        });
-                        }else{
+                        } else {
                             resolve(thumbnail);
-//                            reject('Error ');
                         }
                     });
             },

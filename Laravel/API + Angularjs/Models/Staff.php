@@ -23,7 +23,6 @@ class Staff extends Model
         'user_id',
         'staff_code',
         'staff_name',
-//        'staff_email',
         'staff_pin_type'
     ];
 
@@ -35,6 +34,7 @@ class Staff extends Model
     {
         return $this->belongsTo('App\User');
     }
+
     /**
      * Get the user roles that owns the staff.
      */
@@ -44,14 +44,14 @@ class Staff extends Model
     }
 
 
-
-    public static function archive($archive_time){
+    public static function archive($archive_time)
+    {
 
         $items = self::get();
 
         $bulk_insert = [];
-        if(!$items->isEmpty()){
-            foreach ($items as $item){
+        if (!$items->isEmpty()) {
+            foreach ($items as $item) {
                 $now = date('Y-m-d H:i:s');
                 $bulk_insert[] = [
                     'user_id' => $item->user_id,
@@ -68,15 +68,17 @@ class Staff extends Model
                 ];
             }
         }
-        if(!empty($bulk_insert)){
+        if (!empty($bulk_insert)) {
             return ArchiveStaff::insert($bulk_insert);
         }
 
         return true;
     }
-    public static function updateCounsellorRoleAfterArchive(){
-       return UserRole::where('role_id','=',Role::COURSECOUNSELLOR)
-            ->leftJoin('student_staff', function ($join){
+
+    public static function updateCounsellorRoleAfterArchive()
+    {
+        return UserRole::where('role_id', '=', Role::COURSECOUNSELLOR)
+            ->leftJoin('student_staff', function ($join) {
                 $join->on('user_role.user_id', '=', 'student_staff.staff_user_id');
             })
             ->whereNull('student_staff.staff_user_id')
